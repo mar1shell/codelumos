@@ -1,0 +1,56 @@
+{
+  "name": "codeaudit",
+  "version": "1.0.0",
+  "description": "A production-ready CLI tool for deep codebase analysis: LOC, complexity, duplication, dead code, and health scoring.",
+  "keywords": [
+    "cli",
+    "code-analysis",
+    "metrics",
+    "complexity",
+    "audit"
+  ],
+  "author": "codeaudit contributors",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "codeaudit": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@typescript-eslint/typescript-estree": "^8.56.1",
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.3",
+    "commander": "^11.1.0",
+    "fast-glob": "^3.3.2",
+    "ignore": "^5.3.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^8.54.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.2",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
