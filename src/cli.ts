@@ -30,7 +30,7 @@ const VERSION = typeof __VERSION__ !== 'undefined' ? __VERSION__ : '1.0.0';
 const program = new Command();
 
 program
-  .name('codeaudit')
+  .name('codelumos')
   .description(
     'Deep codebase analysis: LOC, complexity, duplication, dead code, and health scoring.',
   )
@@ -85,7 +85,7 @@ program
         .map(([k]) => k),
     );
 
-    // Load .codeauditrc.json from the target directory (or cwd) upward
+    // Load .codelumos.json from the target directory (or cwd) upward
     const rcStartDir = resolve(pathArg);
     const rc = findAndLoadRc(rcStartDir);
     const opts = mergeConfig(cliOpts, rc, explicitFlags);

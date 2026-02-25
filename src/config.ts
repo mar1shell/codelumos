@@ -3,10 +3,10 @@ import { resolve, dirname } from 'node:path';
 import type { CliOptions } from './types.js';
 
 // ---------------------------------------------------------------------------
-// .codeauditrc.json config file support
+// .codelumos.json config file support
 //
 // Walks up the directory tree from `startDir` looking for a
-// `.codeauditrc.json` file.  Any options found there are used as defaults;
+// `.codelumos.json` file.  Any options found there are used as defaults;
 // explicit CLI flags always take precedence.
 // ---------------------------------------------------------------------------
 
@@ -22,10 +22,10 @@ export interface RcConfig {
   output?: string;
 }
 
-const RC_FILENAME = '.codeauditrc.json';
+const RC_FILENAME = '.codelumos.json';
 
 /**
- * Walk up from `startDir` until a `.codeauditrc.json` is found or we reach
+ * Walk up from `startDir` until a `.codelumos.json` is found or we reach
  * the filesystem root.  Returns the parsed config, or `{}` if none found.
  */
 export function findAndLoadRc(startDir: string): RcConfig {
@@ -61,7 +61,7 @@ export function findAndLoadRc(startDir: string): RcConfig {
  * at its default / undefined.
  *
  * @param cliOpts   Options as parsed from CLI arguments (may contain undefined for optional fields)
- * @param rc        Config loaded from .codeauditrc.json
+  * @param rc        Config loaded from .codelumos.json
  * @param cliFlags  Set of flag names that were explicitly provided on the CLI
  */
 export function mergeConfig(

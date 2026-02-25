@@ -1,6 +1,6 @@
-# codeaudit — Improvement Tasks for Agent
+# codelumos — Improvement Tasks for Agent
 
-Below is a prioritised list of concrete improvements to make to the codeaudit project. Each task includes the exact file(s) to change, the problem, and the required fix.
+Below is a prioritised list of concrete improvements to make to the codelumos project. Each task includes the exact file(s) to change, the problem, and the required fix.
 
 ---
 
@@ -228,7 +228,7 @@ Note: this requires `renderTerminal` to return a `string` instead of writing dir
 
 ---
 
-## 9. Add config file support (`.codeauditrc.json`)
+## 9. Add config file support (`.codelumos.json`)
 
 **Files:** new file `src/config.ts`, updated `src/cli.ts`
 
@@ -238,13 +238,13 @@ All options must be passed as CLI flags every time. There is no way to commit pe
 **Fix:**
 
 1. Create `src/config.ts` that:
-   - Looks for `.codeauditrc.json` in the target directory and each parent up to `/`.
+   - Looks for `.codelumos.json` in the target directory and each parent up to `/`.
    - Parses it and validates it against the `CliOptions` shape (ignore unknown keys).
    - Returns a partial `CliOptions` to be merged with CLI flags (CLI flags take precedence).
 2. In `cli.ts`, load the config file before building `opts` and deep-merge it under CLI flags.
 3. Document the supported keys in the package README.
 
-Example `.codeauditrc.json`:
+Example `.codelumos.json`:
 
 ```json
 {

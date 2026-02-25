@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Core domain types for codeaudit
+// Core domain types for codelumos
 // ---------------------------------------------------------------------------
 
 /** A single file found by the scanner */

@@ -1,5 +1,5 @@
 {
-  "name": "codeaudit",
+  "name": "codelumos",
   "version": "1.0.0",
   "description": "A production-ready CLI tool for deep codebase analysis: LOC, complexity, duplication, dead code, and health scoring.",
   "keywords": [
@@ -9,11 +9,11 @@
     "complexity",
     "audit"
   ],
-  "author": "codeaudit contributors",
+  "author": "codelumos contributors",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "codeaudit": "./dist/cli.js"
+    "codelumos": "./dist/cli.js"
   },
   "main": "./dist/cli.js",
   "files": [
