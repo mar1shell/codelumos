@@ -1,6 +1,9 @@
-
 import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
+
+// Replicating the logic from the codebase for isolated benchmarking
+// This allows us to compare "Before" (Legacy) vs "After" (Current) implementation
+// without needing to revert the actual codebase.
 
 const DEFAULT_MIN_TOKENS = 20;
 
@@ -24,6 +27,9 @@ interface WindowEntry {
   tokenCount: number;
 }
 
+// ---------------------------------------------------------------------------
+// ORIGINAL IMPLEMENTATION (Before Optimization)
+// ---------------------------------------------------------------------------
 function extractWindowsOriginal(
   content: string,
   filePath: string,
@@ -38,6 +44,7 @@ function extractWindowsOriginal(
 
   for (let i = 0; i <= normalized.length - minLines; i++) {
     const window = normalized.slice(i, i + minLines);
+    // EXPENSIVE: Splitting and counting tokens in every window iteration
     const tokenCount = window.join(' ').split(' ').length;
     if (tokenCount < DEFAULT_MIN_TOKENS) continue;
 
@@ -52,6 +59,9 @@ function extractWindowsOriginal(
   return entries;
 }
 
+// ---------------------------------------------------------------------------
+// OPTIMIZED IMPLEMENTATION (Current)
+// ---------------------------------------------------------------------------
 function extractWindowsOptimized(
   content: string,
   filePath: string,
@@ -61,37 +71,34 @@ function extractWindowsOptimized(
   const normalized = rawLines.map(normalizeLine).filter((l) => l.length > 0);
 
   const entries: WindowEntry[] = [];
-
   const normalizedLength = normalized.length;
+
   if (normalizedLength < minLines) return entries;
 
-  // Precompute token counts for ALL lines at once
+  // OPTIMIZATION 1: Precompute token counts for ALL lines
   const tokenCounts = new Int32Array(normalizedLength);
   for (let i = 0; i < normalizedLength; i++) {
-    // split by space since it's already normalized with single spaces
-    // Check if empty string first just in case
     if (normalized[i].length === 0) {
-        tokenCounts[i] = 0;
+      tokenCounts[i] = 0;
     } else {
-        // Optimized counting: scan for spaces
-        let count = 1;
-        const line = normalized[i];
-        for (let j = 0; j < line.length; j++) {
-            if (line.charCodeAt(j) === 32) count++; // space
-        }
-        tokenCounts[i] = count;
+      // OPTIMIZATION 2: Fast token counting (counting spaces + 1)
+      let count = 1;
+      const line = normalized[i];
+      for (let j = 0; j < line.length; j++) {
+        if (line.charCodeAt(j) === 32) count++;
+      }
+      tokenCounts[i] = count;
     }
   }
 
+  // OPTIMIZATION 3: Sliding window sum
   let currentTokenCount = 0;
-  // Initialize first window
   for (let i = 0; i < minLines; i++) {
     currentTokenCount += tokenCounts[i];
   }
 
   const limit = normalizedLength - minLines;
   for (let i = 0; i <= limit; i++) {
-    // Update sliding window count
     if (i > 0) {
       currentTokenCount -= tokenCounts[i - 1];
       currentTokenCount += tokenCounts[i + minLines - 1];
@@ -111,8 +118,12 @@ function extractWindowsOptimized(
   return entries;
 }
 
-// Generate large content
-const lines = [];
+// ---------------------------------------------------------------------------
+// BENCHMARK RUNNER
+// ---------------------------------------------------------------------------
+
+console.log('Generating test data...');
+const lines: string[] = [];
 for (let i = 0; i < 20000; i++) {
     lines.push(`const variable${i} = "some value" + ${i}; // comment`);
     lines.push(`if (variable${i}) { console.log('test', variable${i}); }`);
@@ -130,14 +141,23 @@ extractWindowsOptimized(content.slice(0, 1000), 'test.ts', 6);
 const startOriginal = performance.now();
 const resOriginal = extractWindowsOriginal(content, 'test.ts', 6);
 const endOriginal = performance.now();
-console.log(`Original: ${(endOriginal - startOriginal).toFixed(2)}ms`);
+const durationOriginal = endOriginal - startOriginal;
+console.log(`Original: ${durationOriginal.toFixed(2)}ms`);
 
 const startOptimized = performance.now();
 const resOptimized = extractWindowsOptimized(content, 'test.ts', 6);
 const endOptimized = performance.now();
-console.log(`Optimized: ${(endOptimized - startOptimized).toFixed(2)}ms`);
+const durationOptimized = endOptimized - startOptimized;
+console.log(`Optimized: ${durationOptimized.toFixed(2)}ms`);
+
+console.log('--------------------------------------------------');
+console.log(`Improvement: ${((durationOriginal - durationOptimized) / durationOriginal * 100).toFixed(2)}% faster`);
+console.log('--------------------------------------------------');
 
 // Verify results match
 if (resOriginal.length !== resOptimized.length) {
     console.error(`Mismatch in length! Original: ${resOriginal.length}, Optimized: ${resOptimized.length}`);
+    process.exit(1);
+} else {
+    console.log('Verification: Results match.');
 }
