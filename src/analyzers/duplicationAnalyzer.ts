@@ -47,19 +47,50 @@ function extractWindows(
   const normalized = rawLines.map(normalizeLine).filter((l) => l.length > 0);
 
   const entries: WindowEntry[] = [];
+  const normalizedLength = normalized.length;
 
-  if (normalized.length < minLines) return entries;
+  if (normalizedLength < minLines) return entries;
 
-  for (let i = 0; i <= normalized.length - minLines; i++) {
+  // Precompute token counts for ALL lines
+  const tokenCounts = new Int32Array(normalizedLength);
+  for (let i = 0; i < normalizedLength; i++) {
+    // Because normalized lines already have condensed whitespace and no leading/trailing spaces:
+    // "a b c" -> 3 tokens. "a" -> 1 token. "" -> 0 tokens.
+    if (normalized[i].length === 0) {
+      tokenCounts[i] = 0;
+    } else {
+      // Counting spaces + 1 is much faster than .split(' ').length
+      let count = 1;
+      const line = normalized[i];
+      for (let j = 0; j < line.length; j++) {
+        if (line.charCodeAt(j) === 32) count++; // space
+      }
+      tokenCounts[i] = count;
+    }
+  }
+
+  // Calculate initial window token count
+  let currentTokenCount = 0;
+  for (let i = 0; i < minLines; i++) {
+    currentTokenCount += tokenCounts[i];
+  }
+
+  const limit = normalizedLength - minLines;
+  for (let i = 0; i <= limit; i++) {
+    // For subsequent iterations, update the sliding window
+    if (i > 0) {
+      currentTokenCount -= tokenCounts[i - 1];
+      currentTokenCount += tokenCounts[i + minLines - 1];
+    }
+
+    if (currentTokenCount < DEFAULT_MIN_TOKENS) continue;
+
     const window = normalized.slice(i, i + minLines);
-    const tokenCount = window.join(' ').split(' ').length;
-    if (tokenCount < DEFAULT_MIN_TOKENS) continue;
-
     entries.push({
       path: filePath,
       startLine: i + 1,
       hash: hashWindow(window),
-      tokenCount,
+      tokenCount: currentTokenCount,
     });
   }
 
