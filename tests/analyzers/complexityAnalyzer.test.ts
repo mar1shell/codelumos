@@ -74,4 +74,10 @@ describe('extractJsFunctions', () => {
     const fns = await extractJsFunctions(code, 'TypeScript');
     expect(fns.length).toBe(0);
   });
+
+  it('handles invalid syntax by returning an empty array', async () => {
+    const code = 'function invalid( {';
+    const fns = await extractJsFunctions(code, 'JavaScript');
+    expect(fns).toEqual([]);
+  });
 });
