@@ -128,8 +128,8 @@ function extractImportedRefs(content: string, fromFile: string): ImportedRef[] {
   let match: RegExpExecArray | null;
 
   // Named imports
-  const namedRe = new RegExp(NAMED_IMPORT_RE.source, 'g');
-  while ((match = namedRe.exec(content)) !== null) {
+  NAMED_IMPORT_RE.lastIndex = 0;
+  while ((match = NAMED_IMPORT_RE.exec(content)) !== null) {
     const names = match[1] ?? '';
     const specifier = match[2] ?? '';
     const absPath = resolveSpecifier(specifier, fromFile);
@@ -145,8 +145,8 @@ function extractImportedRefs(content: string, fromFile: string): ImportedRef[] {
   // Default imports — `import Foo from '...'`
   // Skip `import type Foo from` — that's a type-only default import, symbol
   // must still be tracked because it corresponds to an `export default class Foo`
-  const defaultRe = new RegExp(DEFAULT_IMPORT_RE.source, 'g');
-  while ((match = defaultRe.exec(content)) !== null) {
+  DEFAULT_IMPORT_RE.lastIndex = 0;
+  while ((match = DEFAULT_IMPORT_RE.exec(content)) !== null) {
     const name = match[1];
     const specifier = match[2] ?? '';
     if (name !== undefined && name.length > 0 && name !== 'type') {
@@ -161,9 +161,9 @@ function extractImportedRefs(content: string, fromFile: string): ImportedRef[] {
 /** Returns the set of absolute paths that are star-imported from */
 function extractStarImportedPaths(content: string, fromFile: string): Set<string> {
   const paths = new Set<string>();
-  const re = new RegExp(STAR_IMPORT_RE.source, 'g');
+  STAR_IMPORT_RE.lastIndex = 0;
   let match: RegExpExecArray | null;
-  while ((match = re.exec(content)) !== null) {
+  while ((match = STAR_IMPORT_RE.exec(content)) !== null) {
     const specifier = match[1] ?? '';
     const abs = resolveSpecifier(specifier, fromFile);
     if (abs !== null) paths.add(abs);
