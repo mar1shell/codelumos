@@ -21,7 +21,7 @@ import type { CliOptions, OutputFormat, AuditReport } from './types.js';
 // Package version (injected at build time by tsup)
 // ---------------------------------------------------------------------------
 declare const __VERSION__: string;
-const VERSION = typeof __VERSION__ !== 'undefined' ? __VERSION__ : '1.0.0';
+const VERSION = __VERSION__;
 
 // ---------------------------------------------------------------------------
 // CLI definition
