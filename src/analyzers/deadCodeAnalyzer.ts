@@ -98,6 +98,9 @@ function extractExports(content: string, file: ScannedFile): ExportRecord[] {
   for (let i = 0; i < lines.length; i++) {
     const line = (lines[i] ?? '').trim();
 
+    // Fast-path: Most lines in a codebase don't export anything
+    if (!line.includes('export')) continue;
+
     // Skip re-exports
     if (REEXPORT_RE.test(line)) continue;
 
@@ -126,6 +129,9 @@ interface ImportedRef {
 }
 
 function extractImportedRefs(content: string, fromFile: string): ImportedRef[] {
+  // Fast-path: Avoid regex execution if there are absolutely no imports or requires in the file
+  if (!content.includes('import') && !content.includes('require')) return [];
+
   const refs: ImportedRef[] = [];
 
   let match: RegExpExecArray | null;
