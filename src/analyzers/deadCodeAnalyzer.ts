@@ -59,10 +59,13 @@ const SUPPORTED_LANGUAGES = new Set(['TypeScript', 'JavaScript']);
 // Extensions to try when resolving bare import specifiers
 const TS_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
 
+// Pre-compiled regex for entry point detection
+const ENTRY_POINT_RE = /^index\.(ts|tsx|js|jsx|mjs|cjs)$/;
+
 /** Files named index.* are entry points — exports there are always considered used */
 function isEntryPoint(relativePath: string): boolean {
   const base = relativePath.split('/').pop() ?? '';
-  return /^index\.(ts|tsx|js|jsx|mjs|cjs)$/.test(base);
+  return ENTRY_POINT_RE.test(base);
 }
 
 /**
