@@ -79,6 +79,10 @@ async function parseRequirementsTxt(
   };
 }
 
+// Go regexes - pre-compiled for performance
+const GO_REQUIRE_BLOCK_RE = /^require\s*\(([^)]*)\)/ms;
+const GO_SINGLE_REQUIRE_RE = /^require\s+(\S+)/gm;
+
 async function parseGoMod(
   file: ScannedFile,
 ): Promise<DependencyManifest | null> {
@@ -86,10 +90,8 @@ async function parseGoMod(
   if (content === null) return null;
 
   const deps: string[] = [];
-  const requireBlockRe = /^require\s*\(([^)]*)\)/ms;
-  const singleRequireRe = /^require\s+(\S+)/gm;
 
-  const blockMatch = requireBlockRe.exec(content);
+  const blockMatch = GO_REQUIRE_BLOCK_RE.exec(content);
   if (blockMatch?.[1] !== undefined) {
     for (const line of blockMatch[1].split('\n')) {
       const trimmed = line.trim();
@@ -101,7 +103,8 @@ async function parseGoMod(
   }
 
   let match: RegExpExecArray | null;
-  while ((match = singleRequireRe.exec(content)) !== null) {
+  GO_SINGLE_REQUIRE_RE.lastIndex = 0;
+  while ((match = GO_SINGLE_REQUIRE_RE.exec(content)) !== null) {
     if (match[1] !== undefined) deps.push(match[1]);
   }
 
