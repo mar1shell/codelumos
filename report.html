@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Code Audit — project</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6}
+  a{color:#58a6ff}
+  h1{font-size:1.6rem;font-weight:700;color:#e6edf3}
+  h2{font-size:1.1rem;font-weight:600;color:#e6edf3;margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid #21262d}
+  .container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+  .header{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+  .header-meta{color:#8b949e;font-size:.85rem}
+  .score-hero{display:flex;align-items:center;gap:1rem}
+  .score-num{font-size:3rem;font-weight:700;line-height:1}
+  .grade-badge{font-size:1.5rem;font-weight:700;padding:.2rem .8rem;border-radius:6px}
+  .grade-a{background:#1a4731;color:#3fb950}
+  .grade-b{background:#0d2b45;color:#58a6ff}
+  .grade-c{background:#3d2b00;color:#e3b341}
+  .grade-d{background:#3d1c1c;color:#f85149}
+  .grade-f{background:#f85149;color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
+  .card{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:1.25rem 1.5rem}
+  .breakdown-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+  .breakdown-label{width:160px;font-size:.85rem;color:#8b949e;flex-shrink:0}
+  .bar-wrap{flex:1;background:#21262d;border-radius:4px;height:8px;overflow:hidden}
+  .bar{height:100%;border-radius:4px;transition:width .3s}
+  .bar-green{background:#3fb950}
+  .bar-cyan{background:#58a6ff}
+  .bar-yellow{background:#e3b341}
+  .bar-red{background:#f85149}
+  .pts{font-size:.8rem;color:#8b949e;width:55px;text-align:right}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th{text-align:left;padding:.5rem .75rem;color:#8b949e;font-weight:600;border-bottom:1px solid #21262d}
+  td{padding:.4rem .75rem;border-bottom:1px solid #161b22;color:#c9d1d9}
+  tr:hover td{background:#1c2128}
+  .stat{font-size:2rem;font-weight:700;color:#e6edf3}
+  .stat-label{font-size:.8rem;color:#8b949e;margin-top:.15rem}
+  .stats-row{display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1rem}
+  .ok{color:#3fb950}
+  .warn{color:#e3b341}
+  .section{margin-bottom:1.5rem}
+  footer{text-align:center;color:#484f58;font-size:.8rem;margin-top:2rem;padding-top:1rem;border-top:1px solid #21262d}
+  @media print{
+    body{background:#fff;color:#000}
+    .container{max-width:100%;padding:0}
+    .card{border:1px solid #ddd;box-shadow:none;break-inside:avoid;margin-bottom:1rem;background:#fff;color:#000}
+    .header{background:#fff;border:1px solid #ddd;color:#000}
+    h1,h2{color:#000;border-bottom-color:#ddd}
+    th{color:#444;border-bottom-color:#ddd}
+    td{border-bottom-color:#eee;color:#000}
+    .bar-wrap{background:#eee}
+    a{color:#0066cc;text-decoration:none}
+    footer{border-top-color:#ddd;color:#666}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>Code Audit — project</h1>
+      <div class="header-meta">2023-01-01T00:00:00.000Z &nbsp;·&nbsp; 123ms &nbsp;·&nbsp; 15 files</div>
+    </div>
+    <div class="score-hero">
+      <div class="score-num">95</div>
+      <div class="grade-badge grade-a">A+</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>Health Score Breakdown</h2>
+      <div class="breakdown-row">
+            <div class="breakdown-label">Comment Coverage</div>
+            <div class="bar-wrap"><div class="bar bar-green" style="width:100%"></div></div>
+            <div class="pts">100/100</div>
+          </div><div class="breakdown-row">
+            <div class="breakdown-label">Complexity</div>
+            <div class="bar-wrap"><div class="bar bar-green" style="width:90%"></div></div>
+            <div class="pts">90/100</div>
+          </div><div class="breakdown-row">
+            <div class="breakdown-label">Duplication</div>
+            <div class="bar-wrap"><div class="bar bar-green" style="width:100%"></div></div>
+            <div class="pts">100/100</div>
+          </div><div class="breakdown-row">
+            <div class="breakdown-label">Dead Code</div>
+            <div class="bar-wrap"><div class="bar bar-green" style="width:100%"></div></div>
+            <div class="pts">100/100</div>
+          </div>
+    </div>
+
+    <div class="card">
+      <h2>Summary Statistics</h2>
+      <div class="stats-row">
+        <div><div class="stat">1,200</div><div class="stat-label">Lines of Code</div></div>
+        <div><div class="stat">15</div><div class="stat-label">Files</div></div>
+        <div><div class="stat">1.5</div><div class="stat-label">Avg Complexity</div></div>
+      </div>
+      <div class="stats-row">
+        <div><div class="stat">0%</div><div class="stat-label">Duplication Rate</div></div>
+        <div><div class="stat">0%</div><div class="stat-label">Dead Exports</div></div>
+        <div><div class="stat">0</div><div class="stat-label">Dependencies</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section card">
+    <h2>Language Breakdown</h2>
+    <table>
+      <thead><tr><th>Language</th><th>Files</th><th>Total Lines</th><th>Code Lines</th><th>Comments</th></tr></thead>
+      <tbody><tr><td>TypeScript</td><td>10</td><td>1,000</td><td>800</td><td>100</td></tr><tr><td>JavaScript</td><td>5</td><td>500</td><td>400</td><td>50</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section card">
+    <h2>Complexity Hotspots</h2>
+    <table>
+      <thead><tr><th>File</th><th>Max Complexity</th><th>Avg Complexity</th><th>Functions</th></tr></thead>
+      <tbody><tr><td>src/bad.ts</td><td>25</td><td>10</td><td>0</td></tr></tbody>
+    </table>
+  </div>
+
+
+
+
+
+
+
+
+
+  <footer>Generated by codelumos &nbsp;·&nbsp; 2023-01-01T00:00:00.000Z</footer>
+</div>
+</body>
+</html>

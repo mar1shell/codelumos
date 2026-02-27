@@ -126,6 +126,18 @@ export function renderHtml(report: AuditReport): string {
   .warn{color:#e3b341}
   .section{margin-bottom:1.5rem}
   footer{text-align:center;color:#484f58;font-size:.8rem;margin-top:2rem;padding-top:1rem;border-top:1px solid #21262d}
+  @media print{
+    body{background:#fff;color:#000}
+    .container{max-width:100%;padding:0}
+    .card{border:1px solid #ddd;box-shadow:none;break-inside:avoid;margin-bottom:1rem;background:#fff;color:#000}
+    .header{background:#fff;border:1px solid #ddd;color:#000}
+    h1,h2{color:#000;border-bottom-color:#ddd}
+    th{color:#444;border-bottom-color:#ddd}
+    td{border-bottom-color:#eee;color:#000}
+    .bar-wrap{background:#eee}
+    a{color:#0066cc;text-decoration:none}
+    footer{border-top-color:#ddd;color:#666}
+  }
 </style>
 </head>
 <body>
