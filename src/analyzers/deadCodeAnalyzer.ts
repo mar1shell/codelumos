@@ -251,3 +251,6 @@ export async function analyzeDeadCode(
 
   return { deadExports, totalExports, deadRatio };
 }
+
+/** Exported for testing */
+export { resolveSpecifier };
