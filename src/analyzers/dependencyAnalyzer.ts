@@ -1,6 +1,6 @@
 import { readFileContent } from '../scanner/fileScanner.js';
 import { resolve, dirname } from 'node:path';
-import { existsSync } from 'node:fs';
+import { access } from 'node:fs/promises';
 import type { ScannedFile, DependencyResult, DependencyManifest, DependencyKind } from '../types.js';
 
 // ---------------------------------------------------------------------------
@@ -9,6 +9,15 @@ import type { ScannedFile, DependencyResult, DependencyManifest, DependencyKind 
 // Parses package.json (npm), requirements.txt (pip), and go.mod (Go) to
 // summarize dependencies and flag missing lock files.
 // ---------------------------------------------------------------------------
+
+async function checkFileExists(path: string): Promise<boolean> {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 async function parsePackageJson(
   file: ScannedFile,
@@ -38,10 +47,12 @@ async function parsePackageJson(
   );
 
   const dir = dirname(file.path);
-  const hasLockFile =
-    existsSync(resolve(dir, 'package-lock.json')) ||
-    existsSync(resolve(dir, 'yarn.lock')) ||
-    existsSync(resolve(dir, 'pnpm-lock.yaml'));
+  const lockChecks = await Promise.all([
+    checkFileExists(resolve(dir, 'package-lock.json')),
+    checkFileExists(resolve(dir, 'yarn.lock')),
+    checkFileExists(resolve(dir, 'pnpm-lock.yaml')),
+  ]);
+  const hasLockFile = lockChecks.some((exists) => exists);
 
   return {
     kind: 'npm' as DependencyKind,
@@ -65,10 +76,12 @@ async function parseRequirementsTxt(
     .map((l) => l.split(/[>=<!~^]/)[0]?.trim() ?? l);
 
   const dir = dirname(file.path);
-  const hasLockFile =
-    existsSync(resolve(dir, 'Pipfile.lock')) ||
-    existsSync(resolve(dir, 'poetry.lock')) ||
-    existsSync(resolve(dir, 'requirements.lock'));
+  const lockChecks = await Promise.all([
+    checkFileExists(resolve(dir, 'Pipfile.lock')),
+    checkFileExists(resolve(dir, 'poetry.lock')),
+    checkFileExists(resolve(dir, 'requirements.lock')),
+  ]);
+  const hasLockFile = lockChecks.some((exists) => exists);
 
   return {
     kind: 'pip' as DependencyKind,
@@ -106,7 +119,7 @@ async function parseGoMod(
   }
 
   const dir = dirname(file.path);
-  const hasLockFile = existsSync(resolve(dir, 'go.sum'));
+  const hasLockFile = await checkFileExists(resolve(dir, 'go.sum'));
 
   return {
     kind: 'go' as DependencyKind,
