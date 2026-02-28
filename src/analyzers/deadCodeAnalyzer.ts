@@ -96,10 +96,16 @@ function extractExports(content: string, file: ScannedFile): ExportRecord[] {
   const records: ExportRecord[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    const line = (lines[i] ?? '').trim();
+    const rawLine = lines[i] ?? '';
 
-    // Fast-path: Most lines in a codebase don't export anything
-    if (!line.includes('export')) continue;
+    // Fast-path: check raw line for 'export' before trim to save string allocation
+    // Most lines in a codebase don't export anything
+    if (!rawLine.includes('export')) continue;
+
+    const line = rawLine.trim();
+    // Second fast-path: The line must actually start with "export"
+    // to match any of our anchored EXPORT_PATTERNS
+    if (!line.startsWith('export')) continue;
 
     // Skip re-exports
     if (REEXPORT_RE.test(line)) continue;
