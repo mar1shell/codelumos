@@ -54,14 +54,14 @@ function extractWindows(
   // Precompute token counts for ALL lines
   const tokenCounts = new Int32Array(normalizedLength);
   for (let i = 0; i < normalizedLength; i++) {
+    const line = normalized[i] ?? '';
     // Because normalized lines already have condensed whitespace and no leading/trailing spaces:
     // "a b c" -> 3 tokens. "a" -> 1 token. "" -> 0 tokens.
-    if (normalized[i].length === 0) {
+    if (line.length === 0) {
       tokenCounts[i] = 0;
     } else {
       // Counting spaces + 1 is much faster than .split(' ').length
       let count = 1;
-      const line = normalized[i];
       for (let j = 0; j < line.length; j++) {
         if (line.charCodeAt(j) === 32) count++; // space
       }
@@ -72,15 +72,15 @@ function extractWindows(
   // Calculate initial window token count
   let currentTokenCount = 0;
   for (let i = 0; i < minLines; i++) {
-    currentTokenCount += tokenCounts[i];
+    currentTokenCount += tokenCounts[i] ?? 0;
   }
 
   const limit = normalizedLength - minLines;
   for (let i = 0; i <= limit; i++) {
     // For subsequent iterations, update the sliding window
     if (i > 0) {
-      currentTokenCount -= tokenCounts[i - 1];
-      currentTokenCount += tokenCounts[i + minLines - 1];
+      currentTokenCount -= tokenCounts[i - 1] ?? 0;
+      currentTokenCount += tokenCounts[i + minLines - 1] ?? 0;
     }
 
     if (currentTokenCount < DEFAULT_MIN_TOKENS) continue;
