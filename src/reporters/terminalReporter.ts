@@ -37,7 +37,12 @@ function bar(value: number, max: number, width = 24): string {
 function percentBar(pct: number, width = 24): string {
   const filled = Math.round((Math.min(pct, 100) / 100) * width);
   const empty = width - filled;
-  return chalk.green('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
+  let filledStr = '█'.repeat(filled);
+  if (pct >= 88) filledStr = chalk.green(filledStr);
+  else if (pct >= 70) filledStr = chalk.cyan(filledStr);
+  else if (pct >= 50) filledStr = chalk.yellow(filledStr);
+  else filledStr = chalk.red(filledStr);
+  return filledStr + chalk.gray('░'.repeat(empty));
 }
 
 function fmt(n: number): string {
