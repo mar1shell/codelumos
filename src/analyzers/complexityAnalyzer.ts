@@ -227,8 +227,10 @@ const BRANCH_PATTERNS = [
 function countBranches(code: string): number {
   let count = 0;
   for (const pattern of BRANCH_PATTERNS) {
-    const matches = code.match(pattern);
-    if (matches) count += matches.length;
+    pattern.lastIndex = 0;
+    while (pattern.exec(code) !== null) {
+      count++;
+    }
   }
   return count;
 }
@@ -237,14 +239,15 @@ function countBranches(code: string): number {
 // Python function extraction
 // ---------------------------------------------------------------------------
 
+const PYTHON_DEF_PATTERN = /^(\s*)(?:async\s+)?def\s+(\w+)\s*\(/;
+
 function extractPythonFunctions(content: string): FunctionMatch[] {
   const lines = content.split('\n');
   const functions: FunctionMatch[] = [];
-  const defPattern = /^(\s*)(?:async\s+)?def\s+(\w+)\s*\(/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? '';
-    const match = defPattern.exec(line);
+    const match = PYTHON_DEF_PATTERN.exec(line);
     if (match?.[2] !== undefined) {
       const baseIndent = (match[1] ?? '').length;
       let bodyEnd = i;
@@ -272,14 +275,15 @@ function extractPythonFunctions(content: string): FunctionMatch[] {
 // Go function extraction
 // ---------------------------------------------------------------------------
 
+const GO_FUNC_PATTERN = /^func\s+(?:\([^)]*\)\s+)?(\w+)\s*\(/;
+
 function extractGoFunctions(content: string): FunctionMatch[] {
   const lines = content.split('\n');
   const functions: FunctionMatch[] = [];
-  const funcPattern = /^func\s+(?:\([^)]*\)\s+)?(\w+)\s*\(/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? '';
-    const match = funcPattern.exec(line);
+    const match = GO_FUNC_PATTERN.exec(line);
     if (match?.[1] !== undefined) {
       let depth = 0;
       let bodyEnd = i;
@@ -314,13 +318,13 @@ function extractGoFunctions(content: string): FunctionMatch[] {
 // C-family function extraction (C, C++, Java, C#, Kotlin, Swift, Scala)
 // ---------------------------------------------------------------------------
 
+// Matches: optional modifiers, return type, name, parameters, optional {
+const C_FUNC_PATTERN =
+  /^(?:(?:public|private|protected|static|final|override|virtual|abstract|async|inline|extern|const|fun|func|def)\s+)*[\w<>[\],\s*&]+\s+(\w+)\s*\([^)]*\)\s*(?:throws\s+\w+\s*)?\{?/;
+
 function extractGenericCFunctions(content: string): FunctionMatch[] {
   const lines = content.split('\n');
   const functions: FunctionMatch[] = [];
-
-  // Matches: optional modifiers, return type, name, parameters, optional {
-  const funcPattern =
-    /^(?:(?:public|private|protected|static|final|override|virtual|abstract|async|inline|extern|const|fun|func|def)\s+)*[\w<>[\],\s*&]+\s+(\w+)\s*\([^)]*\)\s*(?:throws\s+\w+\s*)?\{?/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? '';
@@ -329,7 +333,7 @@ function extractGenericCFunctions(content: string): FunctionMatch[] {
     // Must have a function-signature-like pattern and open brace
     if (!trimmed.includes('(') || !trimmed.includes(')')) continue;
 
-    const match = funcPattern.exec(trimmed);
+    const match = C_FUNC_PATTERN.exec(trimmed);
     if (match?.[1] === undefined) continue;
 
     const name = match[1];
@@ -382,14 +386,15 @@ function extractGenericCFunctions(content: string): FunctionMatch[] {
 // Ruby function extraction
 // ---------------------------------------------------------------------------
 
+const RUBY_DEF_PATTERN = /^(\s*)def\s+(?:self\.)?(\w+)/;
+
 function extractRubyFunctions(content: string): FunctionMatch[] {
   const lines = content.split('\n');
   const functions: FunctionMatch[] = [];
-  const defPattern = /^(\s*)def\s+(?:self\.)?(\w+)/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? '';
-    const match = defPattern.exec(line);
+    const match = RUBY_DEF_PATTERN.exec(line);
     if (match?.[2] === undefined) continue;
 
     const baseIndent = (match[1] ?? '').length;
