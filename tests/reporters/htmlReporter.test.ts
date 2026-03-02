@@ -187,4 +187,37 @@ describe('htmlReporter', () => {
       expect(html).toContain('grade-badge grade-a'); // MOCK_REPORT has A+
       expect(html).toContain('95');
   });
+
+  it('renders progress bars with proper ARIA attributes for accessibility', () => {
+    const report: AuditReport = {
+        ...MOCK_REPORT,
+        score: {
+            ...MOCK_REPORT.score,
+            breakdown: {
+                commentCoverage: 80,
+                complexity: 90,
+                duplication: 60,
+                deadCode: 100
+            }
+        }
+    };
+    const html = renderHtml(report);
+
+    // Verify presence of required ARIA roles and attributes
+    expect(html).toContain('role="progressbar"');
+    expect(html).toContain('aria-label="Comment Coverage"');
+    expect(html).toContain('aria-label="Complexity"');
+    expect(html).toContain('aria-label="Duplication"');
+    expect(html).toContain('aria-label="Dead Code"');
+
+    // Verify specific score mappings
+    expect(html).toContain('aria-valuenow="80"');
+    expect(html).toContain('aria-valuenow="90"');
+    expect(html).toContain('aria-valuenow="60"');
+    expect(html).toContain('aria-valuenow="100"');
+
+    // Verify min/max attributes are present
+    expect(html).toContain('aria-valuemin="0"');
+    expect(html).toContain('aria-valuemax="100"');
+  });
 });
