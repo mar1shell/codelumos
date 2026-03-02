@@ -328,10 +328,11 @@ function extractGenericCFunctions(content: string): FunctionMatch[] {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? '';
-    const trimmed = line.trim();
 
-    // Must have a function-signature-like pattern and open brace
-    if (!trimmed.includes('(') || !trimmed.includes(')')) continue;
+    // Fast-path: Must have a function-signature-like pattern and open brace
+    if (!line.includes('(') || !line.includes(')')) continue;
+
+    const trimmed = line.trim();
 
     const match = C_FUNC_PATTERN.exec(trimmed);
     if (match?.[1] === undefined) continue;
