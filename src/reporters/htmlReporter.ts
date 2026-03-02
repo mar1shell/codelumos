@@ -24,10 +24,10 @@ function gradeClass(grade: HealthGrade): string {
   return 'grade-f';
 }
 
-function scoreBar(score: number): string {
+function scoreBar(score: number, label: string): string {
   const cls =
     score >= 88 ? 'bar-green' : score >= 70 ? 'bar-cyan' : score >= 50 ? 'bar-yellow' : 'bar-red';
-  return `<div class="bar-wrap"><div class="bar ${cls}" style="width:${score}%"></div></div>`;
+  return `<div class="bar-wrap" role="progressbar" aria-label="${escapeHtml(label)}" aria-valuenow="${score}" aria-valuemin="0" aria-valuemax="100"><div class="bar ${cls}" style="width:${score}%"></div></div>`;
 }
 
 export function renderHtml(report: AuditReport): string {
@@ -169,11 +169,9 @@ export function renderHtml(report: AuditReport): string {
         ] as const
       )
         .map(([label, pts]) => {
-          const cls =
-            pts >= 88 ? 'bar-green' : pts >= 70 ? 'bar-cyan' : pts >= 50 ? 'bar-yellow' : 'bar-red';
           return `<div class="breakdown-row">
             <div class="breakdown-label">${label}</div>
-            <div class="bar-wrap"><div class="bar ${cls}" style="width:${pts}%"></div></div>
+            ${scoreBar(pts, label)}
             <div class="pts">${pts}/100</div>
           </div>`;
         })
