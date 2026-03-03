@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { renderJson } from '../../src/reporters/jsonReporter.js';
 import type { AuditReport } from '../../src/types.js';
 
+type ParsedReport = Record<string, unknown> & { loc: { files: unknown[] } };
+
 // ---------------------------------------------------------------------------
 // Mock Data
 // ---------------------------------------------------------------------------
@@ -64,10 +66,10 @@ const MOCK_REPORT: AuditReport = {
 describe('jsonReporter', () => {
   it('serializes the report to a valid JSON string', () => {
     const json = renderJson(MOCK_REPORT);
-    const parsed = JSON.parse(json);
+    const parsed = JSON.parse(json) as ParsedReport;
 
     // Should match the original object structure
-    expect(parsed).toEqual(JSON.parse(JSON.stringify(MOCK_REPORT)));
+    expect(parsed).toEqual(JSON.parse(JSON.stringify(MOCK_REPORT)) as ParsedReport);
   });
 
   it('uses 2-space indentation', () => {
@@ -84,7 +86,7 @@ describe('jsonReporter', () => {
   it('handles empty/edge case values correctly', () => {
     const emptyReport = { ...MOCK_REPORT, loc: { ...MOCK_REPORT.loc, files: [] } };
     const json = renderJson(emptyReport);
-    const parsed = JSON.parse(json);
+    const parsed = JSON.parse(json) as ParsedReport;
     expect(parsed.loc.files).toEqual([]);
   });
 });

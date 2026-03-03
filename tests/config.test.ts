@@ -10,8 +10,8 @@ const mockFs = {
 };
 
 vi.mock('node:fs', () => ({
-  existsSync: (path: string) => mockFs.existsSync(path),
-  readFileSync: (path: string, encoding: string) => mockFs.readFileSync(path, encoding),
+  existsSync: (path: string): boolean => mockFs.existsSync(path) as boolean,
+  readFileSync: (path: string, encoding: string): string => mockFs.readFileSync(path, encoding) as string,
 }));
 
 describe('findAndLoadRc', () => {
@@ -62,7 +62,7 @@ describe('findAndLoadRc', () => {
 
   it('handles malformed JSON gracefully', () => {
     const startDir = resolve('/app');
-    const configPath = resolve(startDir, '.codelumos.json');
+    const _configPath = resolve(startDir, '.codelumos.json');
 
     mockFs.existsSync.mockReturnValue(true);
     mockFs.readFileSync.mockReturnValue('{ invalid json ');

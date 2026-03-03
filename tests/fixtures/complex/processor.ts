@@ -24,7 +24,7 @@ export function processData(input: unknown[]): unknown[] {
       }
     } else if (Array.isArray(item)) {
       if (item.length > 0) {
-        results.push(...item);
+        results.push(...(item as unknown[]));
       }
     } else {
       results.push(null);
