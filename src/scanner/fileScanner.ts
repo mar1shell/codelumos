@@ -1,6 +1,6 @@
-import { readFile, stat, open } from 'node:fs/promises';
+import { readFile, stat, open, access } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, constants } from 'node:fs';
 import fg from 'fast-glob';
 import type { Ignore as IgnoreInstance } from 'ignore';
 // ignore is a CJS package — the callable factory is at .default.default in ESM
@@ -154,18 +154,39 @@ export async function scanDirectory(
       continue;
     }
 
-    // Detect language (peek first line for shebang)
-    let firstLine: string | undefined;
+    // Ensure file is readable before processing further (mimics implicit check of former readFile)
     try {
-      const head = await readFile(absPath, { encoding: 'utf8' });
-      firstLine = head.split('\n')[0];
+      await access(absPath, constants.R_OK);
     } catch {
       scanned++;
       options.onProgress?.(scanned, filteredPaths.length);
       continue;
     }
 
-    const language = detectLanguage(absPath, firstLine);
+    // Detect language (peek first line for shebang)
+    // ⚡ Bolt Optimization: Fast-path extension/filename check before file I/O
+    let language = detectLanguage(absPath);
+    if (language === 'Unknown') {
+      let firstLine: string | undefined;
+      let fd;
+      try {
+        fd = await open(absPath, 'r');
+        const buf = Buffer.alloc(256);
+        const { bytesRead } = await fd.read(buf, 0, 256, 0);
+        if (bytesRead > 0) {
+          const head = buf.toString('utf8', 0, bytesRead);
+          const nl = head.indexOf('\n');
+          firstLine = nl === -1 ? head : head.slice(0, nl);
+        }
+      } catch {
+        scanned++;
+        options.onProgress?.(scanned, filteredPaths.length);
+        continue;
+      } finally {
+        if (fd !== undefined) await fd.close();
+      }
+      language = detectLanguage(absPath, firstLine);
+    }
 
     // Skip files we cannot classify — no useful analysis can be done on them
     if (language === 'Unknown') {
