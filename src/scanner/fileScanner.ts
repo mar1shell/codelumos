@@ -154,18 +154,28 @@ export async function scanDirectory(
       continue;
     }
 
-    // Detect language (peek first line for shebang)
-    let firstLine: string | undefined;
-    try {
-      const head = await readFile(absPath, { encoding: 'utf8' });
-      firstLine = head.split('\n')[0];
-    } catch {
-      scanned++;
-      options.onProgress?.(scanned, filteredPaths.length);
-      continue;
-    }
+    // Detect language
+    // Fast-path: check if we can detect from filename before reading
+    let language = detectLanguage(absPath);
 
-    const language = detectLanguage(absPath, firstLine);
+    if (language === 'Unknown') {
+      // Need shebang line detection
+      let firstLine: string | undefined;
+      try {
+        const fd = await open(absPath, 'r');
+        const buf = Buffer.alloc(256);
+        const { bytesRead } = await fd.read(buf, 0, 256, 0);
+        await fd.close();
+        let endIdx = buf.indexOf(10); // '\n'
+        if (endIdx === -1) endIdx = bytesRead;
+        firstLine = buf.toString('utf8', 0, endIdx);
+      } catch {
+        scanned++;
+        options.onProgress?.(scanned, filteredPaths.length);
+        continue;
+      }
+      language = detectLanguage(absPath, firstLine);
+    }
 
     // Skip files we cannot classify — no useful analysis can be done on them
     if (language === 'Unknown') {
