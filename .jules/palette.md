@@ -5,3 +5,7 @@
 ## 2026-03-03 - HTML Reporter semantic landmarks
 **Learning:** Adding standard HTML semantic landmarks like `<main>` and `<header>` directly inside HTML reporters improves screen-reader accessibility and adheres to standard Web Content Accessibility Guidelines. It is critical for the generated report to have proper HTML structure.
 **Action:** When working on reporting layers or views, always use semantic HTML tags (`<header>`, `<main>`, `<footer>`, etc.) instead of generic `<div>` wrappers to ensure native accessibility structure.
+
+## 2024-05-15 - ARIA Scope for Table Headers
+**Learning:** HTML tables used for data presentation need explicit column or row scopes to ensure screen readers correctly announce the bindings between data cells and their corresponding headers.
+**Action:** Always include `scope="col"` on `<th>` elements when generating HTML tables.
