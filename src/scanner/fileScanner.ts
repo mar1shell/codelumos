@@ -20,10 +20,8 @@ async function isBinaryFile(filePath: string): Promise<boolean> {
     const buf = Buffer.alloc(SAMPLE_BYTES);
     const { bytesRead } = await fd.read(buf, 0, SAMPLE_BYTES, 0);
     await fd.close();
-    for (let i = 0; i < bytesRead; i++) {
-      if (buf[i] === 0) return true;
-    }
-    return false;
+    // Fast-path: use V8 C++ binding instead of manual loop
+    return buf.subarray(0, bytesRead).includes(0);
   } catch {
     return true; // treat unreadable files as binary
   }
