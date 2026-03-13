@@ -194,71 +194,71 @@ export function renderHtml(report: AuditReport): string {
 
   </div>
 
-  <div class="section card">
+  <section class="section card">
     <h2>Language Breakdown</h2>
     <table>
       <thead><tr><th>Language</th><th>Files</th><th>Total Lines</th><th>Code Lines</th><th>Comments</th></tr></thead>
       <tbody>${langRows}</tbody>
     </table>
-  </div>
+  </section>
 
   ${
     complexity.hotspots.length > 0
-      ? `<div class="section card">
+      ? `<section class="section card">
     <h2>Complexity Hotspots</h2>
     <table>
       <thead><tr><th>File</th><th>Max Complexity</th><th>Avg Complexity</th><th>Functions</th></tr></thead>
       <tbody>${hotspotRows}</tbody>
     </table>
-  </div>`
+  </section>`
       : ''
   }
 
   ${
     duplication.blocks.length > 0
-      ? `<div class="section card">
+      ? `<section class="section card">
     <h2>Duplicated Blocks</h2>
     <table>
       <thead><tr><th>Block Size</th><th>Occurrences</th><th>Locations</th></tr></thead>
       <tbody>${dupRows}</tbody>
     </table>
-  </div>`
+  </section>`
       : ''
   }
 
   ${
     deadCode.deadExports.length > 0
-      ? `<div class="section card">
+      ? `<section class="section card">
     <h2>Potentially Dead Exports</h2>
     <table>
       <thead><tr><th>Symbol</th><th>Type</th><th>File</th><th>Line</th></tr></thead>
       <tbody>${deadRows}</tbody>
     </table>
-  </div>`
+  </section>`
       : ''
   }
 
   ${
     dependencies.manifests.length > 0
-      ? `<div class="section card">
+      ? `<section class="section card">
     <h2>Dependencies</h2>
     <table>
       <thead><tr><th>Manifest</th><th>Kind</th><th>Dependencies</th><th>Dev Dependencies</th><th>Lock File</th></tr></thead>
       <tbody>${depRows}</tbody>
     </table>
-  </div>`
+  </section>`
       : ''
   }
 
   ${
     worstRows.length > 0
-      ? `<div class="section card">
+      ? `<section class="section card">
     <h2>Files Needing Attention</h2>
     <table>
       <thead><tr><th>File</th><th>Score</th><th>Grade</th><th>Issues</th></tr></thead>
       <tbody>${worstRows}</tbody>
     </table>
-  </div>`
+  </section>`
       : ''
   }
 
