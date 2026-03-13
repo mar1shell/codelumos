@@ -9,3 +9,7 @@
 ## 2024-05-21 - Reusing Global Regex and avoiding Array allocations
 **Learning:** Instantiating complex regular expressions repeatedly within functions or loops causes unnecessary overhead. Furthermore, when using `String.prototype.match()` with a global RegExp to count matches, the engine allocates an entire Array of string results, which is wasteful if only the count is needed.
 **Action:** Always hoist invariant RegExp patterns to the module level so they are instantiated once. For simple counting, prefer resetting `pattern.lastIndex = 0` and using `pattern.exec(code)` in a `while` loop, which avoids allocating an array of strings.
+
+## 2024-05-22 - Fast-path binary detection using V8 bindings
+**Learning:** For binary or null-byte detection in `Buffer` or `Uint8Array` instances, using a manual JavaScript `for` loop is extremely slow. Using `.includes(0)` leverages optimized V8 C++ bindings, providing a significant performance boost (often ~35x faster).
+**Action:** Always use `buf.subarray(0, limit).includes(0)` for finding bytes in buffers rather than iterating through the bytes manually in JavaScript.
