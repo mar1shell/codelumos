@@ -197,7 +197,7 @@ export function renderHtml(report: AuditReport): string {
   <section class="section card">
     <h2>Language Breakdown</h2>
     <table>
-      <thead><tr><th>Language</th><th>Files</th><th>Total Lines</th><th>Code Lines</th><th>Comments</th></tr></thead>
+      <thead><tr><th scope="col">Language</th><th scope="col">Files</th><th scope="col">Total Lines</th><th scope="col">Code Lines</th><th scope="col">Comments</th></tr></thead>
       <tbody>${langRows}</tbody>
     </table>
   </section>
@@ -207,7 +207,7 @@ export function renderHtml(report: AuditReport): string {
       ? `<section class="section card">
     <h2>Complexity Hotspots</h2>
     <table>
-      <thead><tr><th>File</th><th>Max Complexity</th><th>Avg Complexity</th><th>Functions</th></tr></thead>
+      <thead><tr><th scope="col">File</th><th scope="col">Max Complexity</th><th scope="col">Avg Complexity</th><th scope="col">Functions</th></tr></thead>
       <tbody>${hotspotRows}</tbody>
     </table>
   </section>`
@@ -219,7 +219,7 @@ export function renderHtml(report: AuditReport): string {
       ? `<section class="section card">
     <h2>Duplicated Blocks</h2>
     <table>
-      <thead><tr><th>Block Size</th><th>Occurrences</th><th>Locations</th></tr></thead>
+      <thead><tr><th scope="col">Block Size</th><th scope="col">Occurrences</th><th scope="col">Locations</th></tr></thead>
       <tbody>${dupRows}</tbody>
     </table>
   </section>`
@@ -231,7 +231,7 @@ export function renderHtml(report: AuditReport): string {
       ? `<section class="section card">
     <h2>Potentially Dead Exports</h2>
     <table>
-      <thead><tr><th>Symbol</th><th>Type</th><th>File</th><th>Line</th></tr></thead>
+      <thead><tr><th scope="col">Symbol</th><th scope="col">Type</th><th scope="col">File</th><th scope="col">Line</th></tr></thead>
       <tbody>${deadRows}</tbody>
     </table>
   </section>`
@@ -243,7 +243,7 @@ export function renderHtml(report: AuditReport): string {
       ? `<section class="section card">
     <h2>Dependencies</h2>
     <table>
-      <thead><tr><th>Manifest</th><th>Kind</th><th>Dependencies</th><th>Dev Dependencies</th><th>Lock File</th></tr></thead>
+      <thead><tr><th scope="col">Manifest</th><th scope="col">Kind</th><th scope="col">Dependencies</th><th scope="col">Dev Dependencies</th><th scope="col">Lock File</th></tr></thead>
       <tbody>${depRows}</tbody>
     </table>
   </section>`
@@ -255,7 +255,7 @@ export function renderHtml(report: AuditReport): string {
       ? `<section class="section card">
     <h2>Files Needing Attention</h2>
     <table>
-      <thead><tr><th>File</th><th>Score</th><th>Grade</th><th>Issues</th></tr></thead>
+      <thead><tr><th scope="col">File</th><th scope="col">Score</th><th scope="col">Grade</th><th scope="col">Issues</th></tr></thead>
       <tbody>${worstRows}</tbody>
     </table>
   </section>`
